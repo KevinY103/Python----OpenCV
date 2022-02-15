@@ -1,0 +1,28 @@
+import cv2 #imports the OpemCV module
+def camera():
+    cap = cv2.VideoCapture(1) #the number of webcams
+    facecasc = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+    eyecasc = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
+
+    while True:
+        ret, frame = cap.read()
+        gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+        faces = facecasc.detectMultiScale(gray, 1.1, 5) #detects faces
+        for (x, y, w, h) in faces:
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 255, 0), 6)
+            rgray = gray[y:y+w, x:x+w]
+            rcolor = frame[y:y+h, x:x+w]
+            eyes = eyecasc.detectMultiScale(rgray, 1.2, 5) #detects eyes
+            for (ex, ey, ew, eh) in eyes:
+                cv2.rectangle(rcolor, (ex, ey), (ex + ew, ey + eh), (0, 100, 255), 5)
+
+        cv2.imshow('frame', frame)
+
+        if cv2.waitKey(1) == ord(' '): #closes the window once you press SPACE
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+
+camera() #runs the function
